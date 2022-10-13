@@ -1,3 +1,5 @@
+// ignore_for_file: constant_identifier_names
+
 library flutter_paypal_payment;
 
 import 'dart:async';
@@ -6,9 +8,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_paypal_payment/pages/complete_payment.dart';
-import 'package:flutter_paypal_payment/widgets/network_error.dart';
 import 'package:flutter_paypal_payment/services/paypal_service.dart';
+import 'package:flutter_paypal_payment/widgets/network_error.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+
+import 'models/transaction.dart';
 
 class PayPalWebView extends StatefulWidget {
   /// Success payment call back function
@@ -34,7 +38,21 @@ class PayPalWebView extends StatefulWidget {
 
   final Function onCancel;
   final String returnURL, cancelURL, note, clientId, secretKey;
-  final List transactions;
+
+  /// The list of transaction as [dynamic]
+  ///
+  /// If [transactions] is not null it is ignore
+  ///
+  /// But both can't be null
+  final List? transactionsMap;
+
+  /// The list of transaction as [Transaction] object
+  ///
+  /// If it is define at the same time as [transactionsMap]
+  /// [transactionsMap] is ignore
+  ///
+  /// But both can't be null
+  final List<Transaction>? transactions;
   final bool sandboxMode;
   const PayPalWebView({
     Key? key,
@@ -43,7 +61,7 @@ class PayPalWebView extends StatefulWidget {
     required this.onCancel,
     required this.returnURL,
     required this.cancelURL,
-    required this.transactions,
+    required this.transactionsMap,
     required this.clientId,
     required this.secretKey,
     this.sandboxMode = false,
@@ -52,7 +70,9 @@ class PayPalWebView extends StatefulWidget {
     this.appBar,
     this.loadingIndicatorWidget,
     this.netWorkErrorWidgetBuilder,
-  }) : super(key: key);
+    this.transactions,
+  })  : assert(transactions != null || transactionsMap != null),
+        super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -95,7 +115,9 @@ class PayPalWebViewState extends State<PayPalWebView> {
           appBar: widget.appBar != null
               ? widget.appBar!(isPageLoading)
               : AppBar(
-                  backgroundColor: const Color(0xFF272727),
+                  backgroundColor:
+                      Theme.of(context).appBarTheme.backgroundColor ??
+                          const Color(0xFF272727),
                   leading: GestureDetector(
                     child: const Icon(Icons.arrow_back_ios),
                     onTap: () => Navigator.pop(context),
@@ -129,7 +151,9 @@ class PayPalWebViewState extends State<PayPalWebView> {
                             SizedBox(width: isPageLoading ? 5 : 0),
                             isPageLoading
                                 ? widget.loadingIndicatorWidget ??
-                                    const CircularProgressIndicator()
+                                    const CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    )
                                 : const SizedBox()
                           ],
                         ),
@@ -230,7 +254,8 @@ class PayPalWebViewState extends State<PayPalWebView> {
     Map<String, dynamic> temp = {
       "intent": "sale",
       "payer": {"payment_method": "paypal"},
-      "transactions": widget.transactions,
+      "transactions": widget.transactions?.map((e) => e.toMap()).toList() ??
+          widget.transactionsMap,
       "note_to_payer": widget.note,
       "redirect_urls": {
         "return_url": widget.returnURL,
