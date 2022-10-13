@@ -61,7 +61,7 @@ class PayPalWebView extends StatefulWidget {
     required this.onCancel,
     required this.returnURL,
     required this.cancelURL,
-    required this.transactionsMap,
+    this.transactionsMap,
     required this.clientId,
     required this.secretKey,
     this.sandboxMode = false,
