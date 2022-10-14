@@ -21,7 +21,9 @@ class PayPalWebView extends StatefulWidget {
   final Function(PayPalPaymentDetail) onSuccess;
 
   /// The builder return the widget to display on network error
-  final Widget Function(void reload)? netWorkErrorWidgetBuilder;
+  /// 
+  /// It take the reloader function as parameter
+  final Widget Function(Function() reload)? networkErrorWidgetBuilder;
 
   /// Error call back function
   ///
@@ -69,7 +71,7 @@ class PayPalWebView extends StatefulWidget {
     this.onWillPop,
     this.appBar,
     this.loadingIndicatorWidget,
-    this.netWorkErrorWidgetBuilder,
+    this.networkErrorWidgetBuilder,
     this.transactions,
   })  : assert(transactions != null || transactionsMap != null),
         super(key: key);
@@ -180,9 +182,9 @@ class PayPalWebViewState extends State<PayPalWebView> {
                         children: [
                           Expanded(
                             child: Center(
-                              child: widget.netWorkErrorWidgetBuilder != null
+                              child: widget.networkErrorWidgetBuilder != null
                                   ? widget
-                                      .netWorkErrorWidgetBuilder!(loadPayment)
+                                      .networkErrorWidgetBuilder!(loadPayment)
                                   : NetworkErrorDefaultWidget(
                                       loadData: loadPayment,
                                       message: "Something went wrong,"),
