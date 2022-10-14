@@ -1,4 +1,3 @@
-import 'package:flutter_paypal_payment/models/models.dart';
 
 /// PayPal transaction article
 class Article {
@@ -20,9 +19,6 @@ class Article {
   /// The article sku
   final String? sku;
 
-  /// The article price currency
-  final Currency currency;
-
   /// Create PayPal transaction article
   Article({
     required this.name,
@@ -31,7 +27,6 @@ class Article {
     required this.price,
     this.tax,
     this.sku,
-    this.currency = Currency.EUR,
   });
 
   /// Get the map representation of the [Article]
@@ -50,7 +45,6 @@ class Article {
       'quantity': quantity.toString(),
       'price': price.toString(),
       'tax': tax.toString(),
-      'currency': currency.toString().split('.').last,
     };
   }
 }

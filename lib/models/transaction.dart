@@ -29,6 +29,8 @@ class Transaction {
       map['description'] = description;
     }
 
+    itemList.currency = amount.currency;
+
     return {
       ...map,
       'amount': amount.toMap(),

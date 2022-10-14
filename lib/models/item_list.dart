@@ -1,3 +1,5 @@
+import 'package:flutter_paypal_payment/models/currency.dart';
+
 import 'article.dart';
 import 'shipping_address.dart';
 
@@ -9,6 +11,8 @@ class ItemList {
   /// The list of article to pay
   final List<Article> items;
 
+  Currency? currency;
+
   /// Create PapPal payment item list
   ItemList({this.shippingAddress, required this.items})
       : assert(items.isNotEmpty, 'The item list must be field');
@@ -19,7 +23,14 @@ class ItemList {
     if (shippingAddress != null) {
       map['shipping_address'] = shippingAddress!.toMap();
     }
-    map['item_list'] = items.map((e) => e.toMap()).toList();
+    if (currency != null) {
+      map['currency'] = currency.toString().split('.').last;
+    }
+    map['item_list'] = items
+        .map(
+          (e) => e.toMap(),
+        )
+        .toList();
     return map;
   }
 }
